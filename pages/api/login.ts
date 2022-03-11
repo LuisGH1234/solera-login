@@ -29,8 +29,8 @@ export default async function handler(
 ) {
   const credentials = req.body as ReqBody
 
-  const query = `select * from Users WHERE username = '${credentials.username}'`
-  const [rows] = await pool.query(query)
+  const query = `select * from Users WHERE username = ?`
+  const [rows] = await pool.query(query, [credentials.username])
   const { password, ...user } = (rows as Array<User>)[0]
 
   const isValid = bcrypt.compareSync(credentials.password, password);
