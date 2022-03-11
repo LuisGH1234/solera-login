@@ -118,6 +118,7 @@ type Data = {
 const Home: NextPage = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
   const [data, setData] = useState<Data | null>(null)
 
   const onClick = () => {
@@ -125,6 +126,7 @@ const Home: NextPage = () => {
       return
     }
 
+    setLoading(true)
     fetch('/api/login', {
       method: 'POST',
       headers: {
@@ -144,6 +146,7 @@ const Home: NextPage = () => {
         message: 'Ocurrio un error al intentar inciar sesión',
       })
     })
+    .finally(() => setLoading(false))
   }
 
   return (
@@ -168,7 +171,7 @@ const Home: NextPage = () => {
             onChange={e => setPassword(e.target.value)}
             placeholder="Contraseña"
           />
-          <Button onClick={onClick}>
+          <Button onClick={onClick} disabled={loading}>
             Iniciar Sesión
           </Button>
           {data !== null && (
