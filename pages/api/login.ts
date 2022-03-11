@@ -1,10 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { pool } from 'db'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import crypto from 'crypto'
-import { promisify } from 'util'
-
-const scrypt = promisify(crypto.scrypt)
+import bcrypt from 'bcryptjs'
 
 interface ReqBody {
   username: string
@@ -30,15 +27,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  // const salt = crypto.randomBytes(12).toString('hex')
-  const query = "select * from Users WHERE username = 'admin'"
+  const credentials = req.body as ReqBody
+
+  const query = `select * from Users WHERE username = '${credentials.username}'`
   const [rows] = await pool.query(query)
   const { password, ...user } = (rows as Array<User>)[0]
-  
-  const credentials = req.body as ReqBody
-  const hash = await scrypt(credentials.password, 'bcrypt salt 12', 64) as Buffer
 
-  if (hash.toString('hex') === password) {
+  const isValid = bcrypt.compareSync(credentials.password, password);
+  if (isValid) {
     res.status(200).json({
       user,
       error: false,
