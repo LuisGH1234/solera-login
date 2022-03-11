@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import styled from 'styled-components'
 
 const AppContainer = styled.div`
@@ -99,9 +99,13 @@ const Alert = styled.div<AlertProps>`
   color: whitesmoke;
 `
 
-const Input = styled.input`
+interface InputProps {
+  error?: boolean
+}
+
+const Input = styled.input<InputProps>`
   height: 42px;
-  border: solid 2px rgb(53, 76, 107, .6);
+  border: solid 2px ${props => props.error === true ? 'red' : 'rgb(53, 76, 107, .6)'};
   border-radius: 12px;
   padding: 1em 1.2em;
 
@@ -120,8 +124,10 @@ const Home: NextPage = () => {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<Data | null>(null)
+  const [isDirty, setIsDirty] = useState(false)
 
   const onClick = () => {
+    if (isDirty === false) setIsDirty(true)
     if (username.length === 0 || password.length === 0) {
       return
     }
@@ -164,12 +170,14 @@ const Home: NextPage = () => {
             value={username}
             onChange={e => setUsername(e.target.value)}
             placeholder="Usuario"
+            error={isDirty && username.length === 0}
           />
           <Input
             type="text"
             value={password}
             onChange={e => setPassword(e.target.value)}
             placeholder="Contraseña"
+            error={isDirty && password.length === 0}
           />
           <Button onClick={onClick} disabled={loading}>
             Iniciar Sesión
