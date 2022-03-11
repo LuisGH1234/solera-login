@@ -92,8 +92,8 @@ interface AlertProps {
   error: boolean
 }
 const Alert = styled.div<AlertProps>`
-  background-color: ${props => props.error ? 'rgb(211, 89, 89, .9)' : 'green'};
-  border: solid 1px ${props => props.error ? 'rgb(211, 89, 89, 1)' : 'green'};
+  background-color: ${props => props.error ? 'rgb(211, 89, 89, .9)' : 'rgb(103, 178, 103, .9)'};
+  border: solid 1px ${props => props.error ? 'rgb(211, 89, 89, 1)' : 'rgb(103, 178, 103, 1)'};
   border-radius: 12px;
   padding: 1em 1.2em;
   color: whitesmoke;
