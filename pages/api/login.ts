@@ -31,6 +31,15 @@ export default async function handler(
 
   const query = `select * from Users WHERE username = ?`
   const [rows] = await pool.query(query, [credentials.username])
+
+  if ((rows as Array<User>).length === 0) {
+    res.status(401).json({
+      error: true,
+      message: 'Credenciales incorrectas',
+    })
+    return
+  }
+
   const { password, ...user } = (rows as Array<User>)[0]
 
   const isValid = bcrypt.compareSync(credentials.password, password);
